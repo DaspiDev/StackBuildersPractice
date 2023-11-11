@@ -1,63 +1,71 @@
 import React, { useEffect, useState } from 'react';
-import { UploadOutlined, UserOutlined, VideoCameraOutlined } from '@ant-design/icons';
-import { Button, Layout, Menu, Spin } from 'antd';
+import { Layout, Menu } from 'antd';
 import menuFilters from './data/menuFilters.json';
-import DefaultList from './components/defaultList';
+import ItemsList from './components/ItemsList';
 
-const { Header, Content, Footer, Sider } = Layout;
-
+const { Header, Sider, Footer } = Layout;
 
 function App() {
-    const [serverData, setServerData] = useState([]);
     const [loadingServerData, setLoadingServerData] = useState(false);
+    const [serverData, setServerData] = useState([]);
+    const [selectedFilter, selectFilter] = useState('0');
+    const [showMore, setShowMore] = useState([]);
 
     useEffect(() => {
-        console.info('LANZA');
         getData()
     }, [])
 
     const getData = async () => {
         setLoadingServerData(true);
-        console.info('FETCH');
         fetch('/getData').then(
             response => response.json()
         ).then(
             data => {
-                console.info('DATA???', data);
                 setLoadingServerData(false);
                 setServerData(data);
             }
         );
 
     }
-
+    // {title: 'Fourteen Years of Go', orderNumber: 1, commentsNumber: 8, points: 37}
     return (
-        <Layout className="mainLayout">
-            <Sider
-                breakpoint="lg"
-                collapsedWidth="0"
-                onBreakpoint={(broken) => {
-                console.log(broken);
-                }}
-                onCollapse={(collapsed, type) => {
-                console.log(collapsed, type);
-                }}
-            >
-                <div className="demo-logo-vertical" />
-                <Menu
-                theme="dark"
-                mode="inline"
-                defaultSelectedKeys={['4']}
-                items={[UserOutlined, VideoCameraOutlined, UploadOutlined, UserOutlined].map(
-                    (icon, index) => ({
-                    key: String(index + 1),
-                    icon: React.createElement(icon),
-                    label: `nav ${index + 1}`,
-                    }),
-                )}
-                />
-            </Sider>
-            <DefaultList loadingServerData={loadingServerData} serverData={serverData} />
+        <Layout className="mainLayout" data-testid="mainlayout">
+            <Header className="headerStyle">
+                <img alt="stackbuilderslogo" src="https://cdn.stackbuilders.com/media/documents/SB_Logo_new.svg" style={{ width: '100%', height: '100%' }}/>
+            </Header>
+            <Layout>
+                <Sider breakpoint="lg" collapsedWidth="0">
+                    <div className="demo-logo-vertical" />
+                    <Menu
+                        theme="dark"
+                        mode="inline"
+                        data-testid="menu"
+                        defaultSelectedKeys={['0']}
+                        items={menuFilters.map(
+                            (e, idx) => ({
+                            key: idx,
+                            label: e.label,
+                            }),
+                        )}
+                        onSelect={(e) => {
+                            selectFilter(e.key);
+                            setShowMore([])
+                        }}
+                    />
+                </Sider>
+                <ItemsList 
+                    showMore={showMore}
+                    setShowMore={(e) => setShowMore(e)}
+                    loadingServerData={loadingServerData} 
+                    serverData={
+                        selectedFilter === '0' ?
+                        serverData :
+                            selectedFilter === '1' ?
+                            serverData.filter(e => e.title.split(" ").length > 5).sort((a,b) => b.commentsNumber - a.commentsNumber) :
+                                serverData.filter(e => e.title.split(" ").length <= 5).sort((a,b) => b.points - a.points)
+                    } />
+            </Layout>
+            <Footer className='footerStyle'>App developed by Manuel D. Fernández Muñoz as a technical test for Stack Builders</Footer>
         </Layout>
     );
 }

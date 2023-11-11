@@ -1,3 +1,11 @@
-{
-    "label": ""
-}
+[
+    {
+        "label": "No filter"
+    },
+    {
+        "label": ">5 words on title"
+    },
+    {
+        "label": "<=5 words on title"
+    }
+]

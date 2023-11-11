@@ -19,3 +19,29 @@ code {
 .loadingSpinner {
     top: 50vh;
 }
+
+.list-layout {
+    overflow-y: auto;
+}
+
+.important {
+    font-weight: 500;
+}
+
+.headerStyle {
+    height: 121px;
+    padding-top: 5px;
+    text-align: center;
+    padding-inline: 50px;
+    line-height: 64px;
+    background-color: #F8F9FA;
+    margin: 10px;
+    box-shadow: 0 .5rem 1rem #00000026!important;
+}
+
+.footerStyle {
+    text-align: center;
+    backgroundColor: #7dbcea;
+    height: 20px;
+    padding: 0px;
+}
